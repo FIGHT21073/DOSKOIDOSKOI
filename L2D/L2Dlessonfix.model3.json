@@ -1,0 +1,18 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "L2Dlessonfix.moc3",
+		"Textures": [
+			"L2Dlessonfix.4096/texture_00.png"
+		],
+		"Physics": "L2Dlessonfix.physics3.json",
+		"DisplayInfo": "L2Dlessonfix.cdi3.json"
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": []
+		}
+	]
+}

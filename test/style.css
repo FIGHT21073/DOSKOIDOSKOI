@@ -58,7 +58,6 @@ body { margin: 0; }
   width: 100vw;
   height: 75vh;
   margin-left: -15vw;
-  border-radius: 50%;
 }
 
 #js-toggle-camera{
