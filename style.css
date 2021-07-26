@@ -69,6 +69,7 @@ body {
   position: fixed;
   z-index: -100;
   margin-left: -15vw;
+  transform: scaleX(-1);
   /* background-color: black; */
 }
 
