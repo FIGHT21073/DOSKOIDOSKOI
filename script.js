@@ -38,7 +38,7 @@ const Peer = window.Peer;
       video: true,
     })
     .catch(console.error);
-
+    console.log(localStream);
   // Render local stream
   // localStreamをdiv(localVideo)に挿入
   const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true })
@@ -60,49 +60,55 @@ const Peer = window.Peer;
       toggleMicrophone.id = `${audioTracks.enabled ? 'js-toggle-microphone' : 'js-toggle-microphone_OFF'}`;
     });
 
+    const streamvideo = localStream;
     //ボタン押した時のカメラ関係の動作
     toggleCamera.addEventListener('click', () => {
       const videoTracks = videoStream.getVideoTracks()[0];
       const localTracks = localStream.getVideoTracks()[0];
+      // const videoOFFcanvas = document.createElement('canvas');
+      // videoOFFcanvas.setAttribute('class',"videoOFFcanvas");
       localTracks.enabled = !localTracks.enabled;
       videoTracks.enabled = !videoTracks.enabled;
-      console.log(videoTracks.enabled)
-  
+      console.log(localStream.getVideoTracks()[0]);
+      // streamvideo = `${videoTracks.enabled ? localStream:videoOFFcanvas}`;
       toggleCamera.id = `${videoTracks.enabled ? 'js-toggle-camera' : 'js-toggle-camera_OFF'}`;
   
     });
 
     //退出ボタン
-    leaveTrigger.addEventListener('click', () => room.close(), { once: true });
-
-
-    //共有ボタンを押してURLをコピー
-    let copy_url = document.URL
-    //copy_url = copy_url.replace('')
-    console.log(copy_url)
-    urlshare.addEventListener('click',() => {
-    shared_url_copy(copy_url);
-    alert("コピーしました");
-  });
+    leaveTrigger.addEventListener('click', () => {
+      var leaveResult = window.confirm("退出しますか？");
+      if(leaveResult == true){
+        window.location.href='./meetinghome.php';
+      }
+      });
+    
+      window.addEventListener('beforeunload', function(e){
+        /** 更新される直前の処理 */
+        room.close();
+      });
 
   // eslint-disable-next-line require-atomic-updates
-  const peer = new Peer(email,{
+  //  var string_email = String(email);
+  const peer = new Peer(post_id,{
     key: '89e695ed-372d-437f-8248-d0c63f9c5e23',
     debug: 3,
   });
 
   // Register join handler
   joinTrigger.addEventListener('click', () => {
+    joinTrigger.id = "js-join-trigger_OFF";
+    joinTrigger.enabled = false;
     // Note that you need to ensure the peer has connected to signaling server
     // before using methods of peer instance.
     if (!peer.open) {
       return;
     }
-
+    
     //入力されたルームIDに入室
     const room = peer.joinRoom(roomId.value, {
       mode: getRoomModeByHash(),
-      stream: localStream,
+      stream: streamvideo,
     });
 
     // room.once('open', () => {
@@ -116,6 +122,9 @@ const Peer = window.Peer;
     room.on('stream', async stream => {
       const newVideo = document.createElement('video');
       const Video_div = document.createElement('button');
+      const nametext = document.createElement('textarea');
+      nametext.id = "name";
+      // nametext.value
       Video_div.id = "remote_div";
       newVideo.id = "remote";
       newVideo.srcObject = stream;
@@ -123,25 +132,55 @@ const Peer = window.Peer;
       // mark peerId to find it later at peerLeave event
       Video_div.setAttribute('data-peer-id', stream.peerId);
       Video_div.setAttribute('onclick',"openprofileForm()");
-      newSpan.append(Video_div);
-      Video_div.append(newVideo);
-      remoteVideos.append(Video_div);
+      newVideo.setAttribute('data-peer-id',stream.peerId);
+      //名前取得
+      $.ajax({
+        type: "POST", //　GETでも可
+        url: "serch_profile.php", //　送り先
+        data: { 'post_id': stream.peerId }, //　渡したいデータをオブジェクトで渡す
+        dataType : "json", //　データ形式を指定
+        scriptCharset: 'utf-8' //　文字コードを指定
+    })
+    .then(
+        function(param){　 //　paramに処理後のデータが入って戻ってくる
+            console.log(param); //　帰ってきたら実行する処理
+            nametext.value = param[0].nickname;
+        },
+        function(XMLHttpRequest, textStatus, errorThrown){ //　エラーが起きた時はこちらが実行される
+            console.log(XMLHttpRequest); //　エラー内容表示
+    });
       await newVideo.play().catch(console.error);
+      newSpan.append(Video_div);
+      Video_div.append(nametext);
+      Video_div.append(newVideo);
       //ポップアップ生成
       Video_div.addEventListener('click',() => {
         console.log("test_start");
-        const data = stream.peerId; // 渡したいデータ
+        const post_id = stream.peerId; // 渡したいデータ
  
         $.ajax({
             type: "POST", //　GETでも可
-            url: "request.php", //　送り先
-            data: { 'データ': data }, //　渡したいデータをオブジェクトで渡す
+            url: "serch_profile.php", //　送り先
+            data: { 'post_id': post_id }, //　渡したいデータをオブジェクトで渡す
             dataType : "json", //　データ形式を指定
             scriptCharset: 'utf-8' //　文字コードを指定
         })
         .then(
             function(param){　 //　paramに処理後のデータが入って戻ってくる
                 console.log(param); //　帰ってきたら実行する処理
+                const profile_nickname = document.getElementById('profile_nickname');
+                const profile_shikaku = document.getElementById('profile_shikaku');
+                const profile_hobby = document.getElementById('profile_hobby');
+                const profile_skill = document.getElementById('profile_skill');
+                const profile_strength = document.getElementById('profile_strength');
+                const profile_comment = document.getElementById('profile_comment');
+                profile_nickname.textContent = param[0].nickname;
+                console.log(param[0].nickname);
+                profile_shikaku.textContent = param[0].shikaku;
+                profile_hobby.textContent = param[0].hobby;
+                profile_skill.textContent = param[0].skill;
+                profile_strength.textContent = param[0].strengths;
+                profile_comment.textContent = param[0].comment;
             },
             function(XMLHttpRequest, textStatus, errorThrown){ //　エラーが起きた時はこちらが実行される
                 console.log(XMLHttpRequest); //　エラー内容表示
@@ -160,13 +199,16 @@ const Peer = window.Peer;
 
     // for closing room members
     room.on('peerLeave', peerId => {
-      const remoteVideo = remoteVideos.querySelector(
+      const remoteDiv = remoteVideos.querySelector(
+        `[data-peer-id="${peerId}"]`
+      );
+      const remoteVideo = remoteDiv.querySelector(
         `[data-peer-id="${peerId}"]`
       );
       remoteVideo.srcObject.getTracks().forEach(track => track.stop());
       remoteVideo.srcObject = null;
       remoteVideo.remove();
-
+      remoteDiv.remove();
       messages.textContent += `=== ${peerId} left ===\n`;
     });
 

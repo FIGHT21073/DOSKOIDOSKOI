@@ -29,9 +29,10 @@ body {
 }
 
 .container {
-  margin-left: auto;
-  margin-right: auto;
-  width: 980px;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  text-align: centers;
 }
 /* room */
 .room {
@@ -44,8 +45,8 @@ body {
 .room .remote-streams {
   color: #f6fbff;
   width: 100vw;
-  height: 12vh;
-  margin-left: 10vw;
+  height: 40vh;
+  text-align: center;
 }
 
 .room .messages {
@@ -56,21 +57,23 @@ body {
 }
 
 #remote{
-  width: 16vw;
-  height: 12vh;
-  background-color: black;
+  width: 40vh;
+  height: 40vh;
+  border:solid #ccc;
 }
 
 #js-local-stream{
-  width: 100%;
-  height: 75vh;
-  min-height: 85%;
-  min-width: 100%;
-  position: fixed;
-  z-index: -100;
-  margin-left: -15vw;
+  width: 100vh;
+  height: 50vh;
+  /* position: fixed; */
+  /* margin-left: 10vw; */
   transform: scaleX(-1);
-  /* background-color: black; */
+  background-color:#222;
+}
+
+#local-stream{
+  width: 100vw;
+  text-align: center;
 }
 
 #js-toggle-camera{
@@ -345,21 +348,31 @@ body.showopenprofileForm .popup{
   overflow: visible;
   transition: .4s;
 }
-#js-url-share:before {
-  content: "";
-  display: inline-block;
-  width: 25px;
-  height: 25px;
-  background: url("./share.png") no-repeat;
-  background-size: contain;
-  vertical-align: middle;
-  margin-bottom: 10px;
+#js-join-trigger {
+  border: none;
+    outline: none;
+    height: 40px;
+    background: blue;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 20px;
+}
+#js-room-id{
+  border: none;
+  border-bottom: 1px solid #fff;
+  background: transparent;
+  outline: none;
+  height: 40px;
+  color: #fff;
+  font-size: 16px;
 }
 #button-layout{
   /* text-align: center; */
-  width: 100vw;
-  margin-top: 75vh;
-  margin-left: 20vw;
+  width: max-content;
+  margin-top: -1vh;
+  margin-left: 30vw;
+  background-color: #000;
+  border: solid #ccc;
 }
 /* #js-room-id{
   display: none;
@@ -395,4 +408,49 @@ body.showopenprofileForm .popup{
   text-align: center;
   width: 20px;
   margin-top: 10vh;
+}
+.form{
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background-color: #000;
+  color: #ccc;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+.videoOFFcanvas{
+  color: #000;
+}
+
+.profilebox dl {
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+}
+
+#profile_first{
+  margin-top: 0px;
+}
+
+#profile_last{
+  margin-bottom: 0px;
+}
+dd{
+  margin-left: 0px;
+  border: solid #ccc;
+}
+#name{
+  position: absolute;
+  border: none;
+  height: 3vh;
+  margin: 1vh;
+}
+
+#js-join-trigger_OFF {
+  border: none;
+    outline: none;
+    height: 40px;
+    background: gray;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 20px;
 }
